@@ -1,0 +1,61 @@
+name: Release Version
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Prepare the build context'
+        uses: actions/checkout@v1
+
+      - name: 'Prepare the local Git repository which contains the source code'
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PRIVATE_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          git clone git@github.com:ajardin/origami-source.git /tmp/origami-source
+
+      - name: 'Prepare the changelog'
+        id: prepare_changelog
+        run: |
+          cd /tmp/origami-source
+          base_url="https://github.com/ajardin/origami-source/commit/"
+
+          if [[ $(git tag | wc -l) -gt 1 ]]; then
+            previous_tag=$(git tag --sort=-creatordate | head -n2 | tail -n1)
+            changelog="$(git log ${previous_tag}..${{ github.ref }} --format='* %s (BASE_URL%h)' --no-merges --reverse)"
+          else
+            changelog="$(git log --format='* %s (BASE_URL%h)' --no-merges --reverse)"
+          fi
+
+          changelog=${changelog//BASE_URL/${base_url}}
+          changelog=${changelog//$'\n'/'%0A'}
+          echo "::set-output name=content::${changelog}"
+
+      - name: 'Create the release'
+        id: create_release
+        uses: actions/create-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ${{ steps.prepare_changelog.outputs.content }}
+          draft: false
+          prerelease: false
+
+      - name: 'Upload the release asset'
+        id: upload_release_asset
+        uses: actions/upload-release-asset@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/origami
+          asset_name: origami.phar
+          asset_content_type: application/octet-stream

@@ -1,0 +1,22 @@
+{
+    "name": "ajardin/origami",
+    "type": "library",
+    "description": "A PHP toolbox to manage local Docker environments (PHAR version).",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexandre Jardin",
+            "email": "info@ajardin.fr"
+        }
+    ],
+    "require": {
+        "php": "^7.4.0",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "ext-pdo": "*",
+        "ext-tokenizer": "*",
+        "ext-xml": "*",
+        "ext-zlib": "*"
+    },
+    "bin": "bin/origami"
+}
