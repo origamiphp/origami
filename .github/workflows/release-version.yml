@@ -18,13 +18,13 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.PRIVATE_DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          git clone git@github.com:ajardin/origami-source.git /tmp/origami-source
+          git clone git@github.com:origamiphp/source.git /tmp/origami-source
 
       - name: 'Prepare the changelog'
         id: prepare_changelog
         run: |
           cd /tmp/origami-source
-          base_url="https://github.com/ajardin/origami-source/commit/"
+          base_url="https://github.com/origamiphp/source/commit/"
 
           if [[ $(git tag | wc -l) -gt 1 ]]; then
             previous_tag=$(git tag --sort=-creatordate | head -n2 | tail -n1)
