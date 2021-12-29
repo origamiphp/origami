@@ -1,8 +1,8 @@
 {
     "name": "ajardin/origami",
-    "type": "project",
     "description": "PHP toolbox to manage your local Docker environments.",
     "license": "MIT",
+    "type": "project",
     "authors": [
         {
             "name": "Alexandre Jardin",
@@ -10,8 +10,9 @@
         }
     ],
     "require": {
-        "php": ">=7.4.0",
+        "php": ">=8.0.2",
         "ext-ctype": "*",
+        "ext-dom": "*",
         "ext-iconv": "*",
         "ext-json": "*",
         "ext-tokenizer": "*",
